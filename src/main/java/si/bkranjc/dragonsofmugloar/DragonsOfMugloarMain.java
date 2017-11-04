@@ -3,6 +3,7 @@ package si.bkranjc.dragonsofmugloar;
 import si.bkranjc.dragonsofmugloar.connection.Connection;
 import si.bkranjc.dragonsofmugloar.solvers.DragonPen;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -11,15 +12,19 @@ import java.util.Optional;
  * <p>
  * The program retrieves a game from the REST API and returns the solution to it.
  */
-public class DragonsOfMugloarMain {
+class DragonsOfMugloarMain {
 
     private static void printHelp() {
         System.out.println("Usage: dragonsOfMugloar <numberOfGames>");
     }
 
-    private static String verboseGameStatus(Game game, GameStatus status, Weather weather, Optional<Dragon> dragon) {
+    @Nonnull
+    private static String verboseGameStatus(@Nonnull final Game game,
+                                            @Nonnull final GameStatus status,
+                                            @Nonnull final Weather weather,
+                                            @Nonnull final Optional<Dragon> dragon) {
         StringBuilder sb = new StringBuilder();
-        sb.append(game.knight.name);
+        sb.append(game.knight().name());
         sb.append(" came to the battle");
         switch (weather) {
             case FOG:
@@ -58,7 +63,7 @@ public class DragonsOfMugloarMain {
         private int games = 0;
         private int victories = 0;
 
-        void mark(GameStatus status) {
+        void mark(@Nonnull final GameStatus status) {
             ++games;
             if (status == GameStatus.VICTORY) {
                 ++victories;
@@ -80,7 +85,7 @@ public class DragonsOfMugloarMain {
      * This program expects one argument - the number of games. The program than retrieves and tries to solve the
      * specified number or games. The result of each game is counted and a final success rate is displayed to the user.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException {
         if (args.length != 1) {
             printHelp();
             System.exit(1);
@@ -101,7 +106,7 @@ public class DragonsOfMugloarMain {
                 Weather weather = connection.getWeather(game);
 
                 try {
-                    Optional<Dragon> dragon = DragonPen.callDragon(game.knight, weather);
+                    Optional<Dragon> dragon = DragonPen.callDragon(game.knight(), weather);
                     GameStatus status = connection.sendDragon(game, dragon);
 
                     if (status == null) {
@@ -113,8 +118,9 @@ public class DragonsOfMugloarMain {
                     tally.mark(status);
                     System.out.println(verboseGameStatus(game, status, weather, dragon));
                 } catch (IllegalArgumentException e) {
-                    System.out.println("Our dragon pickers were surprised by " + game.knight + ". They said: "
+                    System.out.println("Our dragon pickers were surprised by " + game.knight().name() + ". They said: "
                             + e.getMessage());
+                    System.out.println(game);
                     tally.mark(GameStatus.DEFEAT);
                 }
             }

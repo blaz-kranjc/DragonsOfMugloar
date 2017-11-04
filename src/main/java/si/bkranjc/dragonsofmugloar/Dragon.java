@@ -1,8 +1,19 @@
 package si.bkranjc.dragonsofmugloar;
 
-public class Dragon {
-    public int scaleThickness;
-    public int clawSharpness;
-    public int wingStrength;
-    public int fireBreath;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.immutables.value.Value;
+
+@Value.Immutable
+public interface Dragon {
+    @JsonProperty("scaleThickness")
+    int scaleThickness();
+
+    @JsonProperty("clawSharpness")
+    int clawSharpness();
+
+    @JsonProperty("wingStrength")
+    int wingStrength();
+
+    @JsonProperty("fireBreath")
+    int fireBreath();
 }

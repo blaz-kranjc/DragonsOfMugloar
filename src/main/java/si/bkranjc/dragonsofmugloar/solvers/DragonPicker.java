@@ -1,8 +1,10 @@
 package si.bkranjc.dragonsofmugloar.solvers;
 
 import si.bkranjc.dragonsofmugloar.Dragon;
+import si.bkranjc.dragonsofmugloar.ImmutableDragon;
 import si.bkranjc.dragonsofmugloar.Knight;
 
+import javax.annotation.Nonnull;
 import java.util.Comparator;
 import java.util.stream.IntStream;
 
@@ -24,7 +26,7 @@ enum DragonPicker {
      */
     NORMAL(
             k -> {
-                int[] stats = new int[]{k.attack, k.armor, k.agility, k.endurance};
+                int[] stats = new int[]{k.attack(), k.armor(), k.agility(), k.endurance()};
                 // Indexes of the sorted stats.
                 int[] statsSortedIndexes = IntStream.range(0, stats.length)
                         .boxed()
@@ -35,7 +37,7 @@ enum DragonPicker {
                 // Check if this knight fits the preconditions of this solver
                 if (stats[statsSortedIndexes[0]] > 8) {
                     throw new IllegalArgumentException(
-                            k.name +
+                            k.name() +
                                     "'s max stat is unexpectedly high. " +
                                     "No dragon in our pen can defeat him.");
                 }
@@ -52,41 +54,39 @@ enum DragonPicker {
      * Sends a dragon that is adapted to kill boats and unable to breathe fire.
      */
     BOAT_SLAYER(
-            k -> {
-                Dragon d = new Dragon();
-                d.clawSharpness = 10;
-                d.fireBreath = 0;
-                d.scaleThickness = 5;
-                d.wingStrength = 5;
-                return d;
-            }
+            k -> ImmutableDragon.builder()
+                    .clawSharpness(10)
+                    .fireBreath(0)
+                    .scaleThickness(5)
+                    .wingStrength(5)
+                    .build()
     ),
     /**
      * Sends a dragon with equal distribution of the stats.
      */
     ZEN_DRAGON(
-            k -> {
-                Dragon d = new Dragon();
-                d.clawSharpness = 5;
-                d.fireBreath = 5;
-                d.scaleThickness = 5;
-                d.wingStrength = 5;
-                return d;
-            }
+            k -> ImmutableDragon.builder()
+                    .clawSharpness(5)
+                    .fireBreath(5)
+                    .scaleThickness(5)
+                    .wingStrength(5)
+                    .build()
     );
 
     private final Solver solver;
 
-    DragonPicker(final Solver solver) {
+    DragonPicker(final @Nonnull Solver solver) {
         this.solver = solver;
     }
 
-    Dragon getDragon(final Knight k) {
+    @Nonnull
+    Dragon getDragon(@Nonnull final Knight k) {
         return solver.getDragon(k);
     }
 
     @FunctionalInterface
     private interface Solver {
+        @Nonnull
         Dragon getDragon(Knight k);
     }
 
@@ -97,13 +97,14 @@ enum DragonPicker {
      *              scaleThickness, clawSharpness, wingStrength, fireBreath.
      * @return Dragon with specified name.
      */
-    private static Dragon getDragonFomStatArray(final int[] array) {
-        Dragon d = new Dragon();
-        d.scaleThickness = array[0];
-        d.clawSharpness = array[1];
-        d.wingStrength = array[2];
-        d.fireBreath = array[3];
-        return d;
+    @Nonnull
+    private static Dragon getDragonFomStatArray(@Nonnull final int[] array) {
+        return ImmutableDragon.builder()
+                .scaleThickness(array[0])
+                .clawSharpness(array[1])
+                .wingStrength(array[2])
+                .fireBreath(array[3])
+                .build();
     }
 
 }

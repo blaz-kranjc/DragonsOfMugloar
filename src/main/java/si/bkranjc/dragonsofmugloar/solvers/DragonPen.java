@@ -4,6 +4,8 @@ import si.bkranjc.dragonsofmugloar.Dragon;
 import si.bkranjc.dragonsofmugloar.Knight;
 import si.bkranjc.dragonsofmugloar.Weather;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -20,10 +22,11 @@ public class DragonPen {
      * @param weather The weather forecast for the time of the battle.
      * @return A dragon that will beat the knight or no dragon.
      */
-    public static Optional<Dragon> callDragon(final Knight knight, Weather weather) {
+    @Nonnull
+    public static Optional<Dragon> callDragon(final @Nonnull Knight knight, @Nullable Weather weather) {
         if (weather == null) {
             // We don't have valid information on the weather, we are using the normal one
-            weather = Weather.NORMAL;
+            throw new IllegalArgumentException("We never saw a weather like this before!");
         }
         switch (weather) {
             case NORMAL:
@@ -40,6 +43,6 @@ public class DragonPen {
             case LONG_DRY:
                 return Optional.of(DragonPicker.ZEN_DRAGON.getDragon(knight));
         }
-        throw new IllegalArgumentException("Our pen experienced logical an error. This should never happen.");
+        throw new IllegalArgumentException("Our pen experienced an logical error. This should never happen.");
     }
 }
