@@ -91,7 +91,7 @@ public class Connection implements Closeable {
         final HttpPut put = new HttpPut(getPutUrl(game.gameId()));
         put.setHeader("Content-Type", "application/json");
         if (dragon.isPresent()) {
-            final Response r = Response.get(dragon.get());
+            final Response r = ImmutableResponse.builder().dragon(dragon.get()).build();
             put.setEntity(new StringEntity(jsonMapper.writeValueAsString(r)));
         }
         final HttpResponse response = client.execute(put);

@@ -1,24 +1,11 @@
 package si.bkranjc.dragonsofmugloar;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;
 
-import javax.annotation.Nonnull;
-
 @Value.Immutable
+@JsonDeserialize(as = ImmutableGame.class)
 public interface Game {
     int gameId();
-
     Knight knight();
-
-    @JsonCreator
-    @Nonnull
-    static Game get(@JsonProperty("gameId") final int id,
-                    @JsonProperty("knight") @Nonnull final Knight knight) {
-        return ImmutableGame.builder()
-                .gameId(id)
-                .knight(knight)
-                .build();
-    }
 }
